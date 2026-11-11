@@ -12,7 +12,26 @@ const booking=()=>settings.phone?`https://wa.me/${settings.phone.replace(/\D/g,'
 const cta=()=>`<section class="cta"><span class="script">Your story deserves to be remembered</span><h2>Let’s create something<br><em>beautiful together.</em></h2><a class="button" href="/contact/">Let’s plan your shoot ↗</a></section>`;
 const head=(tag,title,desc)=>`<div class="page-head"><span class="eyebrow">${tag}</span><h1>${title}</h1><p>${desc}</p></div>`;
 function photoGrid(items){return items.map(p=>`<button class="photo" data-photo="${esc(p.id)}" aria-label="View ${esc(p.title)}"><img src="${esc(safeUrl(p.url))}" alt="${esc(p.description||p.title)}" loading="lazy"><span>${esc(p.title)} <span class="eyebrow">${esc(p.category)}</span></span></button>`).join('')}
-function bindHomeBanners(){let current=0;const slides=[...document.querySelectorAll('[data-banner-frame]')];if(!slides.length)return;const show=n=>{current=(n+slides.length)%slides.length;slides.forEach((s,i)=>s.hidden=i!==current);document.querySelectorAll('[data-banner-to]').forEach((b,i)=>b.setAttribute('aria-pressed',String(i===current)))};document.querySelectorAll('[data-banner-to]').forEach(b=>b.onclick=()=>show(Number(b.dataset.bannerTo)));document.querySelectorAll('[data-banner-step]').forEach(b=>b.onclick=()=>show(current+Number(b.dataset.bannerStep)))}
+let stopBannerSlider=()=>{};
+function bindHomeBanners(){
+ stopBannerSlider();
+ const slides=[...document.querySelectorAll('[data-banner-frame]')],root=$('.home-banner');if(!slides.length||!root)return;
+ let current=0,timer=null,paused=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches,hover=false,focused=false,touchX=null;
+ const dots=[...document.querySelectorAll('[data-banner-to]')],pause=$('[data-banner-pause]');
+ const clear=()=>{if(timer!==null)clearTimeout(timer);timer=null};
+ const schedule=()=>{clear();if(!paused&&!hover&&!focused&&!document.hidden)timer=setTimeout(()=>show(current+1),5500)};
+ const show=n=>{current=(n+slides.length)%slides.length;slides.forEach((slide,i)=>{slide.hidden=i!==current;slide.setAttribute('aria-hidden',String(i!==current))});dots.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===current)));schedule()};
+ dots.forEach(b=>b.onclick=()=>show(Number(b.dataset.bannerTo)));
+ document.querySelectorAll('[data-banner-step]').forEach(b=>b.onclick=()=>show(current+Number(b.dataset.bannerStep)));
+ const pauseLabel=()=>{if(pause){pause.textContent=paused?'▶':'Ⅱ';pause.setAttribute('aria-label',paused?'Play slideshow':'Pause slideshow');pause.setAttribute('aria-pressed',String(paused))}};
+ if(pause)pause.onclick=()=>{paused=!paused;pauseLabel();schedule()};
+ root.onmouseenter=()=>{hover=true;clear()};root.onmouseleave=()=>{hover=false;schedule()};
+ root.onfocusin=()=>{focused=true;clear()};root.onfocusout=e=>{if(!root.contains(e.relatedTarget)){focused=false;schedule()}};
+ root.onpointerdown=e=>{if(e.pointerType==='touch')touchX=e.clientX};root.onpointerup=e=>{if(touchX!==null&&Math.abs(e.clientX-touchX)>50)show(current+(e.clientX<touchX?1:-1));touchX=null};root.onpointercancel=()=>touchX=null;
+ const visibility=()=>schedule();document.addEventListener('visibilitychange',visibility);
+ stopBannerSlider=()=>{clear();document.removeEventListener('visibilitychange',visibility)};
+ pauseLabel();show(0);
+}
 function render(){const path=location.pathname.replace(/\/$/,'')||'/';document.title=({ '/':'Home','/about':'About','/gallery':'Gallery','/events':'Events','/contact':'Contact','/admin':'Studio admin'}[path]||'Page not found')+' | Imagica Portraits';document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('active',a.pathname.replace(/\/$/,'')===path));$('#main').innerHTML=path==='/'?home():path==='/about'?about():path==='/gallery'?gallery():path==='/events'?eventsPage():path==='/contact'?contact():path==='/admin'?admin():head('404','A frame <em>out of place.</em>','This page could not be found. <a href="/">Return home ↗</a>');if(path==='/gallery')updateGallery();renderFooter();bind();$('#floating').href=booking();$('#floating').textContent=settings.phone?'WhatsApp ↗':'Let’s talk ↗'}
 function updateGallery(){visible=photos.filter(p=>filter==='All'||p.category===filter);$('#gallery-grid').innerHTML=visible.length?photoGrid(visible):'<div class="empty editorial-empty"><h3>This chapter is still being written.</h3><p>New photographs will appear here soon.</p><a class="text-link" href="/contact/">Plan your own story ↗</a></div>';document.querySelectorAll('.filter').forEach(b=>b.classList.toggle('active',b.dataset.filter===filter))}
 function openPhoto(id){visible=photos.filter(p=>location.pathname.includes('gallery')?(filter==='All'||p.category===filter):true);lightIndex=visible.findIndex(p=>p.id===id);showLight();$('#lightbox').showModal()}
