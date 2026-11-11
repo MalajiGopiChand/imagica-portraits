@@ -32,6 +32,7 @@ export async function handleBackend(req,env){
   if(path.startsWith('/api/storage/v1/object/photos/')){
    if(req.method!=='POST')fail('Method not allowed.',405);
    const key=path.split('/').pop();if(!mediaKey.test(key))fail('Invalid image filename.');
+   if(Number(req.headers.get('Content-Length')||0)>10485760)fail('Images must be no larger than 10 MB.',413);
    const mime=req.headers.get('Content-Type'),bytes=new Uint8Array(await req.arrayBuffer());
    if(bytes.length===0||bytes.length>10485760)fail('Images must be between 1 byte and 10 MB.',413);
    const jpeg=bytes[0]===255&&bytes[1]===216&&bytes[2]===255;
@@ -45,7 +46,7 @@ export async function handleBackend(req,env){
   if(path==='/api/rest/v1/settings'){
    if(req.method==='GET')return json([{data:(await read(bucket,'settings/site.json'))||{}}]);
    if(req.method!=='POST')fail('Method not allowed.',405);
-   const {data}=await body(req),clean={};for(const key of ['phone','email','instagram','location','testimonial','testimonialName'])clean[key]=text(data?.[key]??'',key,1000,false);
+   const {data}=await body(req),clean={};for(const key of ['phone','email','instagram','location','testimonial','testimonialName','photographerName','studioBio'])clean[key]=text(data?.[key]??'',key,key==='studioBio'?3000:1000,false);
    if(clean.phone&&!/^\d{8,15}$/.test(clean.phone))fail('WhatsApp requires 8–15 digits, including country code.');
    if(clean.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean.email))fail('Enter a valid email.');
    if(clean.instagram){try{if(new URL(clean.instagram).protocol!=='https:')fail('Instagram URL must use https.')}catch{fail('Enter a valid Instagram URL.')}}

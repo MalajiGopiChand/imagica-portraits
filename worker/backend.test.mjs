@@ -39,6 +39,6 @@ test('event management and settings persist; invalid data is rejected',async()=>
  assert.equal((await(await call('/api/rest/v1/events?published=eq.true')).json())[0].title,data.title);
  assert.equal((await call('/api/rest/v1/events?id=eq.'+event.id,{method:'PATCH',owner:true,data:{...data,date:'invalid'}})).status,400);
  await call('/api/rest/v1/events?id=eq.'+event.id,{method:'DELETE',owner:true});assert.equal((await(await call('/api/admin/trash',{owner:true})).json()).events.length,1);
- await call('/api/rest/v1/settings',{method:'POST',owner:true,data:{data:{location:'By appointment',phone:''}}});assert.equal((await(await call('/api/rest/v1/settings')).json())[0].data.location,'By appointment');
+ await call('/api/rest/v1/settings',{method:'POST',owner:true,data:{data:{location:'By appointment',phone:'',studioBio:'Our photography story',photographerName:'The studio'}}});const settings=(await(await call('/api/rest/v1/settings')).json())[0].data;assert.equal(settings.location,'By appointment');assert.equal(settings.studioBio,'Our photography story');assert.equal(settings.photographerName,'The studio');
  assert.equal((await call('/api/rest/v1/settings',{method:'POST',owner:true,data:{data:{phone:'invalid'}}})).status,400);
 });
