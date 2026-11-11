@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Sitemap: https://imagica-portraits-studio.turfybass4.chatgpt.site/sitemap.xml
