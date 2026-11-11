@@ -1,9 +1,9 @@
+import {isOwner,handleAuth} from './auth.mjs';
 const categories=['Weddings','Pre-Wedding','Birthdays','Portraits','Engagements','Events','Maternity','Fashion & Creative'];
 const uuid=/^[a-f0-9-]{36}$/;
 const mediaKey=/^[a-f0-9-]{36}\.(jpg|png|webp)$/;
 const json=(value,status=200)=>new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 const fail=(message,status=400)=>{throw Object.assign(new Error(message),{status})};
-export function isOwner(req,env){return !!env.ADMIN_OWNER_EMAIL&&!!req.headers.get('oai-authenticated-user-id')&&req.headers.get('oai-authenticated-user-email')?.toLowerCase()===env.ADMIN_OWNER_EMAIL.toLowerCase()}
 const read=async(bucket,key)=>{const o=await bucket.get(key);return o?o.json():null};
 const write=(bucket,key,data)=>bucket.put(key,JSON.stringify(data),{httpMetadata:{contentType:'application/json'}});
 async function records(bucket,type){let cursor,items=[];do{const page=await bucket.list({prefix:'records/'+type+'/',cursor,limit:500});for(let i=0;i<page.objects.length;i+=20){const rows=await Promise.all(page.objects.slice(i,i+20).map(o=>read(bucket,o.key)));items.push(...rows.filter(Boolean))}cursor=page.truncated?page.cursor:undefined}while(cursor);return items}
@@ -13,8 +13,9 @@ async function visibility(bucket,record,on){const urls=record.url?[record.url]:[
 async function body(req){if(Number(req.headers.get('Content-Length')||0)>20000)fail('Request is too large.',413);const raw=await req.text();if(raw.length>20000)fail('Request is too large.',413);try{return JSON.parse(raw)}catch{fail('Invalid request data.')}}
 export async function handleBackend(req,env){
  try{
-  const u=new URL(req.url),path=u.pathname,owner=isOwner(req,env),bucket=env.BUCKET;
-  if(path==='/api/me')return json({authenticated:!!req.headers.get('oai-authenticated-user-id'),admin:owner});
+  const u=new URL(req.url),path=u.pathname,owner=await isOwner(req,env),bucket=env.BUCKET;
+  if(path.startsWith('/api/auth/'))return handleAuth(req,env);
+  if(path==='/api/me')return json({authenticated:owner,admin:owner});
   if(!bucket)fail('Studio storage is temporarily unavailable.',503);
   if(path.startsWith('/media/')){
    if(!['GET','HEAD'].includes(req.method))return json({message:'Method not allowed'},405);
