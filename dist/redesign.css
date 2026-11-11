@@ -2,3 +2,4 @@
 
 header nav a.button.active{color:#fff}
 .cta{background:linear-gradient(#14221edb,#14221ee8),url("/assets/msr-7872.jpg") center 45%/cover;color:#fff}.cta h2,.cta .script{color:#fff}.cta h2 em{color:#e4c890}.cta .button{background:#f9f7f2;color:#26322c;border-color:#f9f7f2}.contact-card{background:linear-gradient(#14221eeb,#14221ef0),url("/assets/msr-4081.jpg") center/cover}#login-error{color:#a32c29;min-height:1.5em}.admin-list img{object-fit:contain;background:#eeebe4}
+.gallery>.empty{column-span:all;width:100%;break-inside:avoid}
