@@ -1,0 +1,23 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "npm run build",
+  "outputDirectory": "public",
+  "functions": { "api/content.js": { "maxDuration": 15 } },
+  "redirects": [
+    { "source": "/admin", "destination": "https://imagica-portraits-studio.turfybass4.chatgpt.site/admin/", "permanent": false },
+    { "source": "/admin/:path*", "destination": "https://imagica-portraits-studio.turfybass4.chatgpt.site/admin/", "permanent": false }
+  ],
+  "rewrites": [
+    { "source": "/api/rest/v1/photos", "destination": "/api/content?resource=photos" },
+    { "source": "/api/rest/v1/events", "destination": "/api/content?resource=events" },
+    { "source": "/api/rest/v1/settings", "destination": "/api/content?resource=settings" },
+    { "source": "/api/me", "destination": "/api/content?resource=me" }
+  ],
+  "headers": [
+    { "source": "/(.*)", "headers": [
+      { "key": "X-Content-Type-Options", "value": "nosniff" },
+      { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+    ] }
+  ]
+}
