@@ -1,1 +1,1 @@
-{"name":"imagica-portraits","version":"1.0.0","private":true,"type":"module","engines":{"node":">=22"},"scripts":{"build":"node vercel-build.mjs","build:sites":"node build.mjs","test":"node --test worker/backend.test.mjs api/content.test.mjs"}}
+{"name":"imagica-portraits","version":"1.0.0","private":true,"type":"module","engines":{"node":"22.x"},"scripts":{"build":"node vercel-build.mjs","build:sites":"node build.mjs","test":"node --test worker/backend.test.mjs tests/content.test.mjs"}}

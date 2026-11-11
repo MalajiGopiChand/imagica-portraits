@@ -1,6 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import handler from './content.js';
+import handler from '../api/content.js';
 function response(){return {code:0,data:null,headers:{},setHeader(k,v){this.headers[k]=v},status(n){this.code=n;return this},json(v){this.data=v;return this}}}
 test('Vercel public gateway rejects writes and unknown resources',async()=>{for(const method of ['POST','PATCH','DELETE']){const r=response();await handler({method,query:{resource:'photos'}},r);assert.equal(r.code,405)}const r=response();await handler({method:'GET',query:{resource:'https://attacker.example'}},r);assert.equal(r.code,404)});
 test('Vercel does not claim owner authentication',async()=>{const r=response();await handler({method:'GET',query:{resource:'me'}},r);assert.deepEqual(r.data,{authenticated:false,admin:false})});
+test('public content always requests published records without forwarding credentials',async()=>{const previous=globalThis.fetch;let request;try{globalThis.fetch=async(url,options)=>{request={url,options};return {ok:true,json:async()=>[{title:'Published photograph'}]}};const r=response();await handler({method:'GET',query:{resource:'photos',published:'eq.false'},headers:{cookie:'private',Authorization:'secret'}},r);assert.equal(r.code,200);assert.equal(request.url,'https://imagica-portraits-studio.turfybass4.chatgpt.site/api/rest/v1/photos?published=eq.true');assert.deepEqual(request.options.headers,{Accept:'application/json'});assert.equal(r.data[0].title,'Published photograph')}finally{globalThis.fetch=previous}});
