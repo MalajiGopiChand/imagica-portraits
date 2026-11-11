@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="310" height="100" viewBox="0 0 310 100" role="img" aria-labelledby="title desc">
+ <title id="title">Imagica Portraits</title><desc id="desc">Gold camera emblem with a charcoal Imagica Portraits wordmark</desc>
+ <g transform="translate(5 16)" fill="none" stroke="#ba861b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M8 16h14l6-10h24l6 10h14a5 5 0 0 1 5 5v37a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V21a5 5 0 0 1 5-5Z"/>
+  <circle cx="40" cy="39" r="19"/><circle cx="40" cy="39" r="12" stroke-width="1.4"/>
+  <path d="m40 27 10 18H30l10-18m-10 18 20-12m-20 0 20 12" stroke-width="1.2"/>
+  <path d="M62 25h5"/>
+ </g>
+ <text x="104" y="53" fill="#181818" font-family="Georgia, 'Times New Roman', serif" font-size="47" letter-spacing="1">Imagica</text>
+ <text x="108" y="78" fill="#806126" font-family="Arial, Helvetica, sans-serif" font-size="12" letter-spacing="7.2">PORTRAITS</text>
+</svg>

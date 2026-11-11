@@ -1,0 +1,7 @@
+/* Wide vector wordmark: readable lettering with no photograph or cropping. */
+header .brand{display:block;background:transparent;border-radius:0;overflow:visible;flex-shrink:0}
+header .brand img{display:block;width:280px;height:auto;object-fit:contain;object-position:center}
+@media(max-width:1000px){header .brand img{width:235px}nav{gap:20px}}
+@media(max-width:550px){header .brand img{width:230px;max-width:70vw;height:auto}}
+.admin-help{margin-top:24px;padding:26px;background:#fff;border:1px solid var(--line)}
+.admin-help h3{margin-top:0}.admin-help li{margin:10px 0}.admin-help ol{padding-left:22px}

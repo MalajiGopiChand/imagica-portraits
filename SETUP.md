@@ -1,6 +1,6 @@
 # Imagica Portraits
 
-Static, dependency-free website with Home, About, Gallery, Events, Contact and a private admin interface. Original supplied logo is preserved. Photography is illustrative until studio work is uploaded. No invented reviews, achievements, contact numbers or team members are published.
+Static, dependency-free website with Home, About, Gallery, Events, Contact and a private admin interface. The header uses a custom charcoal-and-gold SVG logo for clear lettering at every screen size. The original supplied logo is retained as an asset. Photography is illustrative until studio work is uploaded. No invented reviews, achievements, contact numbers or team members are published.
 
 ## Preview
 
