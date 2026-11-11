@@ -1,0 +1,1 @@
+{"name":"imagica-portraits","private":true,"type":"module","scripts":{"build":"node build.mjs","test":"node --test worker/backend.test.mjs"}}

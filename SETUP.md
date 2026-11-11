@@ -1,31 +1,28 @@
-# Imagica Portraits
+# Imagica Portraits — owner dashboard
 
-Static, dependency-free website with Home, About, Gallery, Events, Contact and a private admin interface. The header uses a custom charcoal-and-gold SVG logo for clear lettering at every screen size. The original supplied logo is retained as an asset. Photography is illustrative until studio work is uploaded. No invented reviews, achievements, contact numbers or team members are published.
+The deployed site includes hosted persistent storage and owner-only ChatGPT sign-in. Supabase is no longer required. Public visitors browse without an account.
 
-## Preview
+## Sign in
 
-Run `node preview.mjs` from this directory and open http://localhost:4173. Deploy the entire `dist` directory to any static host. Each page has an actual directory/index.html; no SPA rewrite is needed.
+Open https://imagica-portraits-studio.turfybass4.chatgpt.site/admin/ and choose **Sign in with ChatGPT**. Use the ChatGPT account that owns this Site. The server checks platform-authenticated identity against the hosted secret `ADMIN_OWNER_EMAIL`. Other accounts cannot manage content. There is no separate default password or public registration.
 
-## Connect persistent admin storage
+## Upload and manage photos
 
-1. Create a Supabase project in your own account. Run `supabase.sql` in its SQL editor.
-2. Create the owner account in Supabase Authentication > Users (do not enable public signup). Insert its UUID into `admin_users` using the final commented statement in the SQL file. Disable new-user registrations in Authentication settings.
-3. Edit `dist/config.js`: set `supabaseUrl` to your project URL and `supabaseAnonKey` to the project's public anon key. These are public client connection values. NEVER use a service-role key, secret key, database password or admin password in this file.
-4. Redeploy. Visit `/admin/`, sign in with the owner account, and fill Site Settings with the real WhatsApp number (country code + digits), email, Instagram, and studio location.
-5. Upload images, choose the required occasion category, enter title and alt text, and choose publication/featured status. Originals are stored in Supabase Storage, metadata in Postgres. Published items are shared across all visitors and devices. Draft metadata is restricted by row-level security. The photo bucket is public: unpublished image URLs are still accessible to anyone holding the URL. Do not upload confidential client material.
+1. Open Upload photographs and choose the occasion category.
+2. Enter title and description. Select JPG, PNG or WebP files up to 10 MB each. Review thumbnails.
+3. Check Publish to public gallery and optionally Feature on homepage. Upload.
+4. Published images are stored online and visible in their category to every visitor, across devices and refreshes. Draft media URLs require owner access.
+5. Gallery manager supports editing, replacing, featuring, publication and deletion.
+6. Delete moves the record to Trash. Restore returns it as an unpublished draft.
 
-The unconnected site is deliberately read-only. It does not pretend that local browser storage publishes photos. The admin UI explains setup instead of exposing a fake or insecure password. Auth tokens are kept in session storage and expire according to Supabase settings; sign in again when expired. No public signup page is included.
+Events supports date/time in India, location, description, cover and additional photos. Status is calculated from the timestamp. Site Settings controls the real WhatsApp number, email, location, Instagram and an optional consented testimonial. WhatsApp needs the real number; no fake number is supplied.
 
-## Administration
+## Maintenance
 
-Gallery manager supports editing, replacement, publication and featuring, plus deletion. Event manager supports date/time (India), location, description, cover and multiple supporting images. Event status is derived from its timestamp. Settings include an optional consented testimonial; it is hidden until entered. Inquiry forms open the owner's configured WhatsApp message for the visitor to send. Until a real number is configured, the form explains that booking is unavailable.
+Public pages remain plain HTML/CSS/JavaScript. A small Cloudflare Worker serves assets and protected APIs. R2 stores individual JSON records and image files. The BUCKET binding preserves content across redeployment. All writes verify owner identity, origin and a custom request header. Server checks categories, text limits, image signatures, file size and image references. Public image delivery checks publication status on every request.
 
-Deletion removes gallery metadata and the current storage file. Replaced images and removed event files may remain in storage; review them in the Supabase Storage dashboard. Failed metadata saves after a file upload can also leave an unused file. Back up the database and storage through your Supabase account as needed.
+Soft-deleted and replaced files remain stored for recovery. No permanent-delete or backup-export UI is provided. This is intended for a studio portfolio rather than an unbounded archive. Public lists currently scan the stored portfolio records.
 
-## SEO and assets
+Run `npm test`, `node --check dist/app.js`, and `npm run build`. Public sources are in dist; backend sources are in worker/backend.mjs. build.mjs embeds public assets into dist/server/index.js. preview.mjs previews static pages only and cannot emulate hosted sign-in/storage. Configure secrets through Sites runtime settings, never public files.
 
-Set your final canonical domain in `dist/sitemap.xml` and `dist/robots.txt` if using a custom host. The current sitemap uses the assigned Sites domain. Placeholder photographs load from Unsplash and fonts from Google Fonts. Replace photos with licensed client originals and self-host fonts if required. The client-supplied logo is at `dist/assets/imagica-logo.jpg`.
-
-## Verification
-
-Run `node --check dist/app.js` and `node verify.mjs`. Cloud operations require a real project and owner account; they cannot be live-tested without those connection details. Verify anonymous writes are rejected and non-owner authenticated users cannot change data before launch. No cloud credentials were supplied with this brief.
+supabase.sql is retained only as an optional migration reference and is not used. No Supabase data existed to migrate. Stock images remain clearly illustrative until studio photographs are published.
