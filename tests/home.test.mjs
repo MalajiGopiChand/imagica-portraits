@@ -1,0 +1,8 @@
+import vm from 'node:vm';
+import fs from 'node:fs/promises';
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+const source=await fs.readFile(new URL('../dist/app.js',import.meta.url),'utf8');
+function page(){const nodes=new Map();const node=s=>{if(!nodes.has(s))nodes.set(s,{innerHTML:'',style:{},classList:{toggle(){}},setAttribute(){}});return nodes.get(s)};const context=vm.createContext({console,URL,URLSearchParams,Date,File,setTimeout(){},location:{pathname:'/',origin:'https://studio.example',search:''},fetch:async url=>({ok:true,json:async()=>url.includes('settings')?[{data:{}}]:[]}),document:{querySelector:node,querySelectorAll(){return []},addEventListener(){}}});vm.runInContext(source,context);return {context,nodes}}
+test('homepage renders useful content before cloud data resolves',()=>{const {nodes}=page();const html=nodes.get('#main').innerHTML;assert(html.includes('Photography highlights'));assert(html.includes('Show Birthdays banner'));assert(html.includes('What are we'));assert(html.includes('Book a shoot'));assert(!html.includes('Upcoming sessions and events will be announced here'))});
+test('homepage uses published studio photos and escapes their content',()=>{const {context}=page();vm.runInContext(`photos=[{id:'owned-1',url:'https://studio.example/media/photo.jpg',title:'<unsafe title>',description:'Studio portrait',category:'Weddings',featured:true}];events=[]`,context);const html=vm.runInContext('home()',context);assert(html.includes('https://studio.example/media/photo.jpg'));assert(!html.includes('<unsafe title>'));assert(html.includes('&lt;unsafe title&gt;'))});
