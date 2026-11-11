@@ -20,7 +20,7 @@ If you require the backend and admin to run entirely on Vercel, configure a Verc
 4. Add title and description. Select JPG, PNG or WebP photos up to 10 MB each and review previews.
 5. Check Publish to public gallery and upload. Photos appear in the same category on both hosted public sites.
 6. Gallery manager supports editing, replacing, featuring, unpublishing and deletion to recoverable Trash. Restore returns an item as a draft.
-7. Events supports India date/time, location, description, cover and extra images. Site Settings controls WhatsApp, email, location, Instagram and consented testimonials.
+7. Events supports India date/time, location, description, cover and extra images, including removing saved photographs. Site Settings controls WhatsApp, email, location, Instagram, photographer name, About biography and consented testimonials.
 
 No separate website password or Supabase setup is required. The real WhatsApp number and business contact details must be entered by the owner; no fake number is supplied.
 
