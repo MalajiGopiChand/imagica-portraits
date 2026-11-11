@@ -5,6 +5,7 @@
   "outputDirectory": "public",
   "functions": { "api/content.js": { "maxDuration": 15 } },
   "redirects": [
+    { "source": "/admin/", "destination": "https://imagica-portraits-studio.turfybass4.chatgpt.site/admin/", "permanent": false },
     { "source": "/admin", "destination": "https://imagica-portraits-studio.turfybass4.chatgpt.site/admin/", "permanent": false },
     { "source": "/admin/:path*", "destination": "https://imagica-portraits-studio.turfybass4.chatgpt.site/admin/", "permanent": false }
   ],
