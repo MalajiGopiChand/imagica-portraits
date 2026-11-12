@@ -18,3 +18,9 @@ Vercel serves public pages and redirects /admin/ to the existing studio backend.
 The MSR collection uses optimized copies; original files remain unchanged. All unique photographs are imported into the editable gallery. Six optimized image assets supply page backgrounds while data loads. Wedding, portrait, couple and maternity collections can be recategorized in Gallery manager. Replaced and trashed files are retained for recovery.
 
 Public sources: dist/. Backend sources: worker/auth.mjs and worker/backend.mjs. Run npm test, npm run build, and npm run build:sites. The Sites build embeds assets into the Worker. Runtime secrets are configured in Sites, not Vercel or browser JavaScript. The Vercel API is a read-only public gateway.
+
+## Editorial website edition
+
+The public website now includes Home, Our Story, Collections, Films, Services, Events and Contact. Existing administrator login, photo management, event management and settings are unchanged. Contact details still come from Site settings. The reference studio’s branding and contact details are not used.
+
+The Films page is ready for native MP4 playback but no video files were supplied. Configure real film entries in dist/films-data.js with title, direct MP4 src, matching poster and orientation. No invented videos or social embeds are displayed. Hosted video sources must support browser playback and byte-range requests. Local video assets require a suitable static media host; do not embed large videos in the Sites Worker bundle.
