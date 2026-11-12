@@ -22,7 +22,9 @@ export async function handleBackend(req,env){
    const key=path.slice(7);if(!mediaKey.test(key))fail('Image not found.',404);
    if(!owner&&!(await read(bucket,'visibility/'+key))?.published)fail('Image not found.',404);
    const file=await bucket.get('images/'+key);if(!file)fail('Image not found.',404);
-   return new Response(req.method==='HEAD'?null:file.body,{headers:{'Content-Type':file.httpMetadata?.contentType||'application/octet-stream','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
+   const etag=file.httpEtag||'"'+key+'"';const headers={'Content-Type':file.httpMetadata?.contentType||'application/octet-stream','Cache-Control':'private, no-cache','ETag':etag,'X-Content-Type-Options':'nosniff'};
+   if(req.headers.get('If-None-Match')===etag)return new Response(null,{status:304,headers});
+   return new Response(req.method==='HEAD'?null:file.body,{headers});
   }
   const mutate=!['GET','HEAD'].includes(req.method);
   if(mutate){if(!owner)fail('Only the studio owner can make changes.',403);if(req.headers.get('Origin')!==u.origin||req.headers.get('X-Imagica-Request')!=='studio')fail('Invalid request origin.',403)}

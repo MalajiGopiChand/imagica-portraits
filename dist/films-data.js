@@ -1,3 +1,2 @@
-// Add only real, supplied films. Each entry: {title, src, poster, orientation: 'portrait'|'landscape'}.
-// Use direct MP4 URLs and matching poster images; no social embeds.
 const studioFilms=[];
+const instagramReels=["DYDA7fLuSay","DWoV8aJkx_R","DS-tUZEEyO1","DSqDiDVk-pG","DSnBX9-E7dL","DSkRU94E__G","CgOMiQzIIWk"];

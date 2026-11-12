@@ -28,9 +28,9 @@ test('upload, categories, publication privacy, trash and restoration persist',as
  assert.deepEqual(await(await call('/api/rest/v1/photos?published=eq.true')).json(),[]);
  assert.equal((await call('/media/'+key,{owner:true})).status,200);
  assert.equal((await call('/api/rest/v1/photos?id=eq.'+item.id,{method:'PATCH',owner:true,data:{...item,published:true}})).status,200);
- assert.equal((await call('/media/'+key)).status,200);
+ const publicImage=await call('/media/'+key);assert.equal(publicImage.status,200);const tag=publicImage.headers.get('etag');assert(tag);assert.equal(publicImage.headers.get('cache-control'),'private, no-cache');assert.equal((await call('/media/'+key,{headers:{'If-None-Match':tag}})).status,304);
  assert.equal((await(await call('/api/rest/v1/photos?published=eq.true')).json())[0].category,'Birthdays');
- await call('/api/rest/v1/photos?id=eq.'+item.id,{method:'DELETE',owner:true});assert.equal((await call('/media/'+key)).status,404);
+ await call('/api/rest/v1/photos?id=eq.'+item.id,{method:'DELETE',owner:true});assert.equal((await call('/media/'+key)).status,404);assert.equal((await call('/media/'+key,{headers:{'If-None-Match':tag}})).status,404);
  assert.equal((await(await call('/api/admin/trash',{owner:true})).json()).photos.length,1);
  await call('/api/rest/v1/photos?id=eq.'+item.id,{method:'PATCH',owner:true,data:{restore:true}});
  const restored=await(await call('/api/rest/v1/photos',{owner:true})).json();assert.equal(restored[0].published,false);assert.equal(restored[0].deleted,false);
